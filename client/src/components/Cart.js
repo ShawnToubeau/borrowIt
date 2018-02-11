@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 const renderCart = items => {
   console.log(items)
   return items.length > 0 ? (
@@ -10,7 +9,7 @@ const renderCart = items => {
           <th scope="col">Quantity</th>
           <th scope="col">Name</th>
           <th scope="col">Owner</th>
-          <th scope="col">-</th>
+          <th scope="col">Remove Item</th>
         </tr>
       </thead>
       <tbody>

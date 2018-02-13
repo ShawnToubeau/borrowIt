@@ -1,41 +1,48 @@
 import React, { Component } from 'react';
-import Checkout from './components/Checkout';
-import Cart from './components/Cart';
-import InventoryView from './components/InventoryView';
-
-require('bootstrap')
-require('../node_modules/bootstrap/dist/css/bootstrap.min.css')
+import Navbar from './components/Navbar';
+import CustomerView from './components/CustomerView';
+import AdminView from './components/AdminView';
+import Auth from './Auth';
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isAuthenticated: false,
+      auth: new Auth()
+    }
+    this.login = this.login.bind(this)
+    this.logout = this.logout.bind(this)
+  }
+  login(creds, cb) {
+    this.state.auth.verify(this.state.auth.sign(creds))
+      .then(() => this.setState({
+        isAuthenticated: true
+      }))
+      .catch((err) => {
+        console.log(err)
+        cb(err)
+      })
+  }
+  logout() {
+    this.setState({
+      isAuthenticated: false
+    })
+  }
   render() {
     return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-12 col-lg-8">
-            <InventoryView />
-          </div>
-          <div className="col-md-12 col-lg-4">
-            <div className="row">
-              <div className="col-md-6 col-lg-12">
-                <Cart />
-              </div>
-              <div className="col-md-6 col-lg-12">
-                <Checkout cart={[
-                  {
-                    id: 'abc123',
-                    name: 'Raspberry Pi 3'
-                  },
-                  {
-                    id: 'def456',
-                    name: 'Arduino Uno'
-                  }
-                ]}/>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
+      <React.Fragment>
+        <Navbar
+          isAuthenticated={this.state.isAuthenticated}
+          onLogin={this.login}
+          onLogout={this.logout}
+        />
+        {this.state.isAuthenticated ? (
+          <AdminView />
+        ) : (
+          <CustomerView />
+        )}
+      </React.Fragment>
     );
   }
 }
